@@ -15,18 +15,37 @@
         <div class="middle-l">
           <div class="cd-wrapper">
             <div class="cd" ref="cdRef">
-              <img :src="currentSong.pic" :class="cdCls" class="image" ref="cdImageRef">
+              <img
+                :src="currentSong.pic"
+                :class="cdCls"
+                class="image"
+                ref="cdImageRef"
+              />
             </div>
           </div>
         </div>
+        <scroll class="middle-r">
+          <div class="lyric-wrapper">
+            <div v-if="currentLyric">
+              <p
+                class="text"
+                :class="{ current: currentLineNum === index }"
+                v-for="(line, index) in currentLyric.lines"
+                :key="line.num"
+              ></p>
+            </div>
+          </div>
+        </scroll>
       </div>
       <div class="bottom">
         <div class="progress-wrapper">
-          <span class="time time-l">{{formatTime(currentTime)}}</span>
+          <span class="time time-l">{{ formatTime(currentTime) }}</span>
           <div class="progress-bar-wrapper">
             <progress-bar :process="process"></progress-bar>
           </div>
-          <span class="time time-r">{{formatTime(currentSong.duration)}}</span>
+          <span class="time time-r">{{
+            formatTime(currentSong.duration)
+          }}</span>
         </div>
         <div class="operators">
           <div class="icon i-left">
@@ -67,13 +86,16 @@ import { useStore } from "vuex";
 import { computed, watch, ref } from "vue";
 import useMode from "./use-mode";
 import useFavorite from "./use-favorite";
-import useCd from './use-cd'
+import useCd from "./use-cd";
+import useLyric from "./use-lyric";
 import progressBar from "./progress-bar";
-import { formatTime } from '@/assets/js/util'
+import Scroll from '@/components/base/scroll/scroll'
+import { formatTime } from "@/assets/js/util";
 export default {
   name: "player",
   components: {
     progressBar,
+    Scroll
   },
   setup() {
     const store = useStore();
@@ -88,11 +110,14 @@ export default {
     const currentIndex = computed(() => store.state.currentIndex);
     // 歌曲的进度
     const process = computed(() => {
-      return currentTime.value / currentSong.value.duration
-    })
+      return currentTime.value / currentSong.value.duration;
+    });
     const { modeIcon, changeMode } = useMode();
     const { getFavoriteIcon, toggleFavorite } = useFavorite();
-    const { cdCls, cdRef, cdImageRef } = useCd()
+    const { cdCls, cdRef, cdImageRef } = useCd();
+    const { currentLyric, currentLineNum } = useLyric();
+    console.log('currentLyric---', currentLyric.lines)
+    // console.log(111)
     // 歌曲列表
     const playList = computed(() => store.state.playList);
     // disable样式
@@ -101,17 +126,17 @@ export default {
     });
     const audioRef = ref(null);
     const songReady = ref(null);
-    const currentTime = ref(0)  // 歌曲播放到的当前时间
+    const currentTime = ref(0); // 歌曲播放到的当前时间
     watch(currentSong, (newSong) => {
       if (!newSong.id || !newSong.url) {
         return;
       }
-      currentTime.value = 0   // 歌曲切换的时候，时间变为0
+      currentTime.value = 0; // 歌曲切换的时候，时间变为0
       songReady.value = false;
       const audioEl = audioRef.value;
       audioEl.src = newSong.url;
       audioEl.play();
-      console.log("audioel---", audioEl);
+      // console.log("audioel---", audioEl);
     });
     // 根据播放状态，暂停/开始音乐
     watch(playing, (newPlaying) => {
@@ -197,8 +222,8 @@ export default {
       songReady.value = true;
     }
     function updateTime(e) {
-      console.log('update time---', e.target.currentTime)
-      currentTime.value = e.target.currentTime
+      // console.log("update time---", e.target.currentTime);
+      currentTime.value = e.target.currentTime;
     }
     return {
       fullScreen,
@@ -225,7 +250,10 @@ export default {
       // cd
       cdCls,
       cdRef,
-      cdImageRef
+      cdImageRef,
+      // lyric
+      currentLineNum,
+      currentLyric
     };
   },
 };

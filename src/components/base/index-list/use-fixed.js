@@ -3,7 +3,7 @@ import { ref, watch, computed, nextTick } from 'vue'
 export default function useFixed(props) {
   const groupRef = ref(null)
   const listHeights = ref([])   // 2.把每一个组的列表的高度区间记录下来，用一个数组
-  console.log('ref---', groupRef.value)
+  // console.log('ref---', groupRef.value)
   const scrollY = ref(0)  // 纵向滚动值
   const currentIndex = ref(0)   // 当前组的索引
   const distance = ref(0)  // 当前组得下一个组离容器顶部得距离
@@ -61,12 +61,12 @@ export default function useFixed(props) {
 
   function calculate() {
     // 区间高度是一个累计的值的一个数组
-    console.log(111)
+    // console.log(111)
     // 1.获取每个groupRef得每一个children，即每个分类项目-->li组成得dom的数组
     const list = groupRef.value.children
-    console.log('list-children---', list)
+    // console.log('list-children---', list)
     const listHeightsVal = listHeights.value
-    console.log('listHeightsVal---', listHeightsVal)
+    // console.log('listHeightsVal---', listHeightsVal)
     let height = 0   // 第一个组的高度从0开始
     listHeightsVal.length = 0 // 初始化操作  
     // 第一个组的高度为0

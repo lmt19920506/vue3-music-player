@@ -31,7 +31,7 @@ export default {
       } else {
         // const cachedSinger = storage.session.get(SINGER_KEY)
         const cachedSinger = JSON.parse(localStorage.getItem(SINGER_KEY))
-        console.log('cachedSinger111---', cachedSinger)
+        // console.log('cachedSinger111---', cachedSinger)
         if (cachedSinger && cachedSinger.mid === this.$route.params.id) {
           ret = cachedSinger
         }
@@ -39,12 +39,12 @@ export default {
       return ret
     },
     pic() {
-      console.log('computedSinger222---', this.computedSinger)
+      // console.log('computedSinger222---', this.computedSinger)
       const singer = this.computedSinger
       return singer && singer.pic
     },
     title() {
-      console.log('computedSinger333---', this.computedSinger)
+      // console.log('computedSinger333---', this.computedSinger)
       const singer = this.computedSinger
       return singer && singer.name
     }
@@ -52,10 +52,10 @@ export default {
   async created() {
     const singer = this.computedSinger
     const result = await getSingerDetail(singer)
-    console.log('song-list---', result.songs)
+    // console.log('song-list---', result.songs)
     this.songs = await processSongs(result.songs)
-    console.log('singer detail query---', result)
-    console.log('songs query---', this.songs)
+    // console.log('singer detail query---', result)
+    // console.log('songs query---', this.songs)
   },
 }
 </script>

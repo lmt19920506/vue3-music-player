@@ -27,7 +27,7 @@ export default {
   },
   async mounted() {
     const result = await getSingerList()
-    console.log('singerList---', result)
+    // console.log('singerList---', result)
     this.singerListData = result.singers
   },
   methods: {

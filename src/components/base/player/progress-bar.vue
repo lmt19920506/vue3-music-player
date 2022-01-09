@@ -32,16 +32,16 @@ export default {
     };
   },
   mounted() {
-    console.log('ref---', this.$refs.progress.style)
-    console.log('el---', this.$el)
+    // console.log('ref---', this.$refs.progress.style)
+    // console.log('el---', this.$el)
   },
   created() {
     this.touch = {}
   },
   methods: {
     onTouchStart(e) {
-      console.log("start---", e);
-      console.log("start---", 111);
+      // console.log("start---", e);
+      // console.log("start---", 111);
       this.touch.x1 = e.touches[0].pageX
       this.touch.beginWidth = this.$refs.progress.clientWidth
     },
@@ -71,7 +71,7 @@ export default {
     process(newProcess) {
       const barWidth = this.$el.clientWidth - progressBtnWidth;
       this.offset = barWidth * newProcess;
-      console.log("offset---", this.offset);
+      // console.log("offset---", this.offset);
     },
   },
 };
