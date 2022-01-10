@@ -12,7 +12,7 @@
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
       <div class="middle">
-        <div class="middle-l">
+        <div class="middle-l" style="display: none">
           <div class="cd-wrapper">
             <div class="cd" ref="cdRef">
               <img
@@ -24,15 +24,17 @@
             </div>
           </div>
         </div>
-        <scroll class="middle-r">
+        <scroll class="middle-r" ref="lyricScrollRef">
           <div class="lyric-wrapper">
-            <div v-if="currentLyric">
+            <div v-if="currentLyric" ref="lyricListRef">
               <p
                 class="text"
                 :class="{ current: currentLineNum === index }"
                 v-for="(line, index) in currentLyric.lines"
                 :key="line.num"
-              ></p>
+              >
+                {{line.txt}}
+              </p>
             </div>
           </div>
         </scroll>
@@ -98,6 +100,10 @@ export default {
     Scroll
   },
   setup() {
+    const audioRef = ref(null);
+    const songReady = ref(null);
+    const currentTime = ref(0); // 歌曲播放到的当前时间
+
     const store = useStore();
     const fullScreen = computed(() => store.state.fullScreen);
     const currentSong = computed(() => store.getters.currentSong);
@@ -115,7 +121,7 @@ export default {
     const { modeIcon, changeMode } = useMode();
     const { getFavoriteIcon, toggleFavorite } = useFavorite();
     const { cdCls, cdRef, cdImageRef } = useCd();
-    const { currentLyric, currentLineNum } = useLyric();
+    const { currentLyric, currentLineNum, playLyric, stopLyric, lyricListRef, lyricScrollRef } = useLyric({songReady, currentTime});
     console.log('currentLyric---', currentLyric.lines)
     // console.log(111)
     // 歌曲列表
@@ -124,9 +130,7 @@ export default {
     const disableCls = computed(() => {
       return songReady.value ? "" : "disable";
     });
-    const audioRef = ref(null);
-    const songReady = ref(null);
-    const currentTime = ref(0); // 歌曲播放到的当前时间
+    
     watch(currentSong, (newSong) => {
       if (!newSong.id || !newSong.url) {
         return;
@@ -144,7 +148,13 @@ export default {
         return;
       }
       const audioEl = audioRef.value;
-      newPlaying ? audioEl.play() : audioEl.pause();
+      if (newPlaying) {
+        audioEl.play()
+        playLyric()
+      } else {
+        audioEl.pause();
+        stopLyric()
+      }
     });
 
     function goback() {
@@ -216,6 +226,7 @@ export default {
         return;
       }
       songReady.value = true;
+      playLyric()
     }
     function error() {
       // 歌曲出错的时候，把songReady设为true，保证歌曲可以上下切换，不至于卡在那里
@@ -253,7 +264,9 @@ export default {
       cdImageRef,
       // lyric
       currentLineNum,
-      currentLyric
+      currentLyric,
+      lyricListRef,
+      lyricScrollRef
     };
   },
 };
